@@ -8,4 +8,4 @@ The project is developed in the Qt Creator IDE.
 ## Content
 Here are the source codes of the program and the installation file.
 ## Installation
-Run the installation file and follow the instructions of the installer.
+Run the installation file Install_DLT.exe and follow the instructions of the installer.
