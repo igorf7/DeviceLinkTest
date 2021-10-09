@@ -26,6 +26,7 @@ ComWorkView::ComWorkView(QWidget *parent, ComPort *port) :
  */
 ComWorkView::~ComWorkView()
 {
+    qDebug() << "By-by from" << this;
     delete ui;
 }
 
