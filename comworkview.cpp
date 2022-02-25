@@ -120,6 +120,10 @@ void ComWorkView::sendPacket()
 
     array.append(ui->reqLineEdit->text().toUtf8());
 
+    if (ui->crCheckBox->isChecked()) {
+        array.append('\n');
+    }
+
     pComPort->sendToComPort(array);
     ui->txLcdNumber->display(ui->txLcdNumber->value()+1);
 }

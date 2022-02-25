@@ -1,5 +1,5 @@
 # DeviceLinkTest
-Version 1.0.1
+Version 1.0.2
 ## Description
 This utility is designed to test communication with devices via TCP, UART, RS232, RS485.
 The program can work simultaneously with three devices - two com ports and one TCP.

@@ -72,8 +72,14 @@ void TcpWorkView::timerEvent(QTimerEvent *event)
 void TcpWorkView::sendPacket()
 {
     QByteArray array;
+
     array.append(ui->reqLineEdit->text().toUtf8());
+
+    if (ui->crTcpCheckBox->isChecked()) {
+        array.append('\n');
+    }
     emit sendToServer(array);
+
     ui->txLcdNumber->display(ui->txLcdNumber->value()+1);
 }
 
