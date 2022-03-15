@@ -1,4 +1,4 @@
-#include "comportview.h"
+﻿#include "comportview.h"
 #include "ui_comportview.h"
 #include <QThread>
 #include <QDebug>
@@ -13,26 +13,25 @@ ComPortView::ComPortView(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    comPort = new ComPort();
+    comPort = new ComPort;
+
+    connect(this, &ComPortView::comConnectClicked, comPort, &ComPort::onConnectClicked);
+    connect(this, &ComPortView::comDisconnectClicked, comPort, &ComPort::onDisconnectComPort);
+    connect(comPort, &ComPort::portError, this, &ComPortView::onPortError);
+    connect(comPort, &ComPort::connected, this, &ComPortView::onConnected);
 
     threadComPort = new QThread;
     threadComPort->setObjectName("threadComPort");
     comPort->moveToThread(threadComPort);
     comPort->serialPort.moveToThread(threadComPort);
 
-    QObject::connect(threadComPort, &QThread::started, comPort, &ComPort::onPortStart);
-    QObject::connect(threadComPort, &QThread::finished, comPort, &ComPort::deleteLater);
-    QObject::connect(comPort, &ComPort::quitComPort, threadComPort, &QThread::deleteLater);
-
-    QObject::connect(this, &ComPortView::comConnectClicked, comPort, &ComPort::onConnectClicked);
-    QObject::connect(this, &ComPortView::comDisconnectClicked, comPort, &ComPort::onDisconnectComPort);
-    QObject::connect(comPort, &ComPort::portError, this, &ComPortView::onPortError);
-    QObject::connect(comPort, &ComPort::connected, this, &ComPortView::onConnected);
+    connect(threadComPort, &QThread::started, comPort, &ComPort::onPortStart);
+    connect(threadComPort, &QThread::finished, comPort, &ComPort::deleteLater);
+    connect(comPort, &ComPort::quitComPort, threadComPort, &QThread::deleteLater);
 
     threadComPort->start(); // Start Com Port thread
-    this->updatePortList();
 
-    qDebug() << "Hello from" <<this;
+    this->updatePortList();
 }
 
 /**

@@ -1,4 +1,4 @@
-#ifndef COMPORT_H
+﻿#ifndef COMPORT_H
 #define COMPORT_H
 
 #include <QObject>
@@ -28,6 +28,7 @@ public slots:
     void onDisconnectComPort();
     void onConnectClicked(const QString &portName,
                           const QByteArray &settings);
+    void onSendToComPort(const QByteArray &request);
 
 private slots:
     void onReadyRead();

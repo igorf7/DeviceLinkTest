@@ -16,16 +16,17 @@ TcpWorkView::TcpWorkView(QWidget *parent, TcpClient *client) :
 
     isPollingRun = false;
 
-    QObject::connect(this, &TcpWorkView::sendToServer,
+    connect(this, &TcpWorkView::sendToServer,
                          client, &TcpClient::onSendToServer);
 
-    QObject::connect(client, &TcpClient::confirmTcpConnection,
+    connect(client, &TcpClient::confirmTcpConnection,
                          this, &TcpWorkView::onConfirmTcpConnection);
 
-    QObject::connect(client, &TcpClient::showResponse,
+    connect(client, &TcpClient::showResponse,
                          this, &TcpWorkView::onShowResponse);
 
-    qDebug() << "Hello from" << this;
+    ui->eolCharComboBox->setCurrentIndex(0);
+    ui->deleteEolCheckBox->setChecked(true);
 }
 
 /**
@@ -33,6 +34,10 @@ TcpWorkView::TcpWorkView(QWidget *parent, TcpClient *client) :
  */
 TcpWorkView::~TcpWorkView()
 {
+    if (logFile.isOpen()) {
+        logFile.close();
+    }
+
     qDebug() << "By-by from" << this;
     delete ui;
 }
@@ -44,6 +49,16 @@ TcpWorkView::~TcpWorkView()
 void TcpWorkView::setHeader(QString header)
 {
     ui->workHeadLabel->setText(header);
+}
+
+int TcpWorkView::getClientNum()
+{
+    return clientNum;
+}
+
+void TcpWorkView::setClientNum(int num)
+{
+    clientNum = num;
 }
 
 /**
@@ -75,12 +90,65 @@ void TcpWorkView::sendPacket()
 
     array.append(ui->reqLineEdit->text().toUtf8());
 
-    if (ui->crTcpCheckBox->isChecked()) {
+    switch(ui->eolCharComboBox->currentIndex())
+    {
+    case 0:
         array.append('\n');
+        break;
+    case 1:
+        array.append('\r');
+        break;
+    case 2:
+        array.append('\r');
+        array.append('\n');
+        break;
+    case 3:
+        array.append('\n');
+        array.append('\r');
+        break;
+    default:
+        break;
     }
+
     emit sendToServer(array);
 
     ui->txLcdNumber->display(ui->txLcdNumber->value()+1);
+
+    if (ui->writeFileCheckBox->isChecked()) {
+        if (!logFile.exists()) {
+            this->createNewFile();
+            qDebug() << "New log file created";
+        }
+        logFile.write("\nRequest: " + array + '\n');
+    }
+}
+
+/**
+ * @brief ComWorkView::createNewFile
+ */
+void TcpWorkView::createNewFile()
+{
+    QString LogDir = QDir::currentPath() + "/Log";
+
+    QDir folder = LogDir;
+
+    if (!folder.exists()) {
+        folder.mkdir(LogDir);
+    }
+    folder.setPath(LogDir = folder.path() + "/TcpLog" + QString::number(clientNum));
+    if (!folder.exists()) {
+        folder.mkdir(LogDir);
+    }
+
+    QString filename = LogDir+"/log_";
+    filename.append((QDate::currentDate().toString("yyyyMMdd_")));
+    filename.append(QTime::currentTime().toString("hhmmss").append(".txt"));
+    logFile.setFileName(filename);
+
+    if (!logFile.open(QIODevice::Append | QIODevice::Text)) {
+        qDebug() << "Could not open file for append";
+        return;
+    }
 }
 
 /**
@@ -132,9 +200,35 @@ void TcpWorkView::onShowResponse(const QByteArray &response)
 {
     QString showString(response);
 
+    if (ui->deleteEolCheckBox->isChecked()) {
+        if (showString.right(1) == '\r') {
+            showString.chop(1);
+        }
+        if (showString.right(1) == '\n') {
+            showString.chop(1);
+        }
+    }
+
     ui->respLineEdit->setText(showString.toUtf8());
-    showString.clear();
-    showString.append(response.toHex());
-    ui->respLineEditHex->setText(showString.toUtf8());
+    ui->respLineEditHex->setText(showString.toUtf8().toHex());
     ui->rxLcdNumber->display(ui->rxLcdNumber->value()+1);
+
+    if (ui->writeFileCheckBox->isChecked()) {
+        QTextStream filename(&logFile);
+        filename << "Response:" << Qt::endl;
+        filename << "ASCII => " << ui->respLineEdit->text() << Qt::endl;
+        filename << "Hex => " << ui->respLineEditHex->text() << Qt::endl;
+    }
+}
+
+/**
+ * @brief TcpWorkView::on_singleButton_clicked
+ */
+void TcpWorkView::on_singleButton_clicked()
+{
+    if (!isTcpConnected) {
+        return;
+    }
+
+    this->sendPacket();
 }

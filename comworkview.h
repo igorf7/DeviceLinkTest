@@ -3,6 +3,7 @@
 
 #include "comport.h"
 #include <QWidget>
+#include <QFile>
 
 namespace Ui {
 class ComWorkView;
@@ -19,8 +20,11 @@ public:
     ~ComWorkView();
 
     void setHeader(QString header);
+    int getClientNum();
+    void setClientNum(int num);
 
 signals:
+    void sendToComPort(const QByteArray &request);
 
 public slots:
     void onConnected(bool isOpened);
@@ -29,6 +33,7 @@ public slots:
 
 private slots:
     void on_pollStartButton_clicked();
+    void on_singleButton_clicked();
 
 protected:
     qint32 pollingPeriod;
@@ -37,14 +42,16 @@ protected:
 private:
     Ui::ComWorkView *ui;
 
+    QFile logFile;
     ComPort *pComPort = nullptr;
 
     bool isPollingRun;
     bool isComOpened = false;
     int currentTab;
-
+    int clientNum;
 
     void sendPacket();
+    void createNewFile();
 };
 
 #endif // BARPOLLVIEW_H

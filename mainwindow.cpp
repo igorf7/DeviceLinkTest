@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QDialog>
 #include <QLabel>
+#include <QSpinBox>
+#include <QPushButton>
 
 /**
  * @brief Class constructor
@@ -14,57 +16,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setWindowTitle("DeviceLinkTest");
 
-    /* "Connection" tab */
-    TcpPortView *tcpConn = new TcpPortView(this);
-    ComPortView *comConn = new ComPortView(this);
-    ComPortView *comConn1 = new ComPortView(this);
-
-    tcpConn->setHeader("<H2>TCP Connection</H1>");
-    comConn->setHeader("<H2>Com Connection</H1>");
-    comConn1->setHeader("<H2>Com Connection</H1>");
-
-    QHBoxLayout *connTabLayout = new QHBoxLayout;
-    connTabLayout->addWidget(tcpConn);
-    connTabLayout->addWidget(comConn);
-    connTabLayout->addWidget(comConn1);
-    ui->tabWidget->widget(0)->setLayout(connTabLayout);
-
-    /* "Data exchange" tab */
-    TcpWorkView *tcpPoll = new TcpWorkView(this, tcpConn->getClient());
-    ComWorkView *comPoll = new ComWorkView(this, comConn->getComPort());
-    ComWorkView *comPoll1 = new ComWorkView(this, comConn1->getComPort());
-
-    tcpPoll->setHeader("<H2>TCP Exchange</H2>");
-    comPoll->setHeader("<H2>Com Exchange</H2>");
-    comPoll1->setHeader("<H2>Com Exchange</H2>");
-
-    QHBoxLayout *workTabLayout = new QHBoxLayout;
-    workTabLayout->addWidget(tcpPoll);
-    workTabLayout->addWidget(comPoll);
-    workTabLayout->addWidget(comPoll1);
-    ui->tabWidget->widget(1)->setLayout(workTabLayout);
-
-    /*  */
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)),
-            tcpConn, SLOT(onTabChanged(int)));
-
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)),
-            tcpPoll, SLOT(onTabChanged(int)));
-
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)),
-            comConn, SLOT(onTabChanged(int)));
-
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)),
-            comConn1, SLOT(onTabChanged(int)));
-
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)),
-            comPoll, SLOT(onTabChanged(int)));
-
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)),
-            comPoll1, SLOT(onTabChanged(int)));
+    /* Create and set layouts */
+    this->initClientViews(tcpQuantity, comQuantity);
 
     ui->tabWidget->setCurrentIndex(0);
-    qDebug() << "Hello from" << this;
+    ui->ComDeleteEOL->setChecked(true);
+    ui->TcpDeleteEOL->setChecked(true);
 }
 
 /**
@@ -77,30 +34,185 @@ MainWindow::~MainWindow()
 }
 
 /**
- * @brief Menu File->Quit
+ * @brief MainWindow::initClientViews
+ * @param tcp_num
+ * @param com_num
  */
-void MainWindow::on_quit_triggered()
+void MainWindow::initClientViews(int tcp_num, int com_num)
 {
-    this->close();
+    int rows = 0, cols = 0;
+
+    connTabLayout = new QGridLayout;
+    workTabLayout = new QGridLayout;
+
+    tcpQuantity = tcp_num;
+    comQuantity = com_num;
+
+    /* Create TCP views */
+    for (int i = 0; i < tcpQuantity; ++i) {
+        tcpConnList.append(new TcpPortView);
+        tcpConnList.at(i)->setHeader("<H2>TCP Connection " + QString::number(i+1) + "</H2>");
+        tcpConnList.at(i)->setObjectName(tcpConnList.at(i)->objectName()+QString::number(i+1));
+        connTabLayout->addWidget(tcpConnList.at(i), rows, cols);
+        tcpPollList.append(new TcpWorkView(this, tcpConnList.at(i)->getClient()));
+        tcpPollList.at(i)->setHeader("<H2>TCP Exchange " + QString::number(i+1) + "</H2>");
+        tcpPollList.at(i)->setObjectName(tcpPollList.at(i)->objectName()+QString::number(i+1));
+        workTabLayout->addWidget(tcpPollList.at(i), rows, cols);
+        tcpPollList.at(i)->setClientNum(i+1);
+        connect(ui->tabWidget, SIGNAL(currentChanged(int)), tcpConnList.at(i), SLOT(onTabChanged(int)));
+        connect(ui->tabWidget, SIGNAL(currentChanged(int)), tcpPollList.at(i), SLOT(onTabChanged(int)));
+
+        if (++cols > (tcpMaximum-1)) {
+            rows += 1; cols = 0;
+        }
+    }
+    /* Create COM views */
+    for (int i = 0; i < comQuantity; ++i) {
+        comConnList.append(new ComPortView);
+        comConnList.at(i)->setHeader("<H2>COM Connection " + QString::number(i+1) + "</H2>");
+        comConnList.at(i)->setObjectName(comConnList.at(i)->objectName()+QString::number(i+1));
+        connTabLayout->addWidget(comConnList.at(i), rows, cols);
+        comPollList.append(new ComWorkView(this, comConnList.at(i)->getComPort()));
+        comPollList.at(i)->setHeader("<H2>COM Exchange " + QString::number(i+1) + "</H2>");
+        comPollList.at(i)->setObjectName(comPollList.at(i)->objectName()+QString::number(i+1));
+        workTabLayout->addWidget(comPollList.at(i), rows, cols);
+        comPollList.at(i)->setClientNum(i+1);
+        connect(ui->tabWidget, SIGNAL(currentChanged(int)), comConnList.at(i), SLOT(onTabChanged(int)));
+        connect(ui->tabWidget, SIGNAL(currentChanged(int)), comPollList.at(i), SLOT(onTabChanged(int)));
+
+        if (++cols > (comMaximum-1)) {
+            rows += 1; cols = 0;
+        }
+    }
+    /* Set layouts */
+    ui->tabWidget->widget(0)->setLayout(connTabLayout);
+    ui->tabWidget->widget(1)->setLayout(workTabLayout);
 }
 
-void MainWindow::on_actionAbout_triggered()
+/**
+ * @brief MainWindow::deinitClientViews
+ * @param tcp_num
+ * @param com_num
+ */
+void MainWindow::deinitClientViews(int tcp_num, int com_num)
 {
-    QDialog* aboutWindow = new QDialog(this);
+    for(int i = 0; i < tcp_num; ++i) {
+        disconnect(ui->tabWidget, SIGNAL(currentChanged(int)),
+                   tcpConnList.at(i), SLOT(onTabChanged(int)));
+        disconnect(ui->tabWidget, SIGNAL(currentChanged(int)),
+                   tcpPollList.at(i), SLOT(onTabChanged(int)));
+        connTabLayout->removeWidget(tcpConnList.at(i));
+        workTabLayout->removeWidget(tcpPollList.at(i));
+        delete tcpConnList.at(i);
+        delete tcpPollList.at(i);
+    }
+    tcpConnList.clear();
+    tcpPollList.clear();
+
+    for(int i = 0; i < com_num; ++i) {
+        disconnect(ui->tabWidget, SIGNAL(currentChanged(int)),
+                   comConnList.at(i), SLOT(onTabChanged(int)));
+        disconnect(ui->tabWidget, SIGNAL(currentChanged(int)),
+                   comPollList.at(i), SLOT(onTabChanged(int)));
+        connTabLayout->removeWidget(comConnList.at(i));
+        workTabLayout->removeWidget(comPollList.at(i));
+        delete comConnList.at(i);
+        delete comPollList.at(i);
+    }
+    comConnList.clear();
+    comPollList.clear();
+
+    ui->tabWidget->widget(0)->layout()->removeItem(connTabLayout);
+    ui->tabWidget->widget(1)->layout()->removeItem(workTabLayout);
+    delete connTabLayout;
+    delete workTabLayout;
+}
+
+/**
+ * @brief MainWindow::on_About_triggered
+ */
+void MainWindow::on_About_triggered()
+{
+    QDialog *aboutWindow = new QDialog(this);
     aboutWindow->setWindowTitle("About");
     aboutWindow->resize(350, 230);
     aboutWindow->setModal(true);
     aboutWindow->setWindowFlags(Qt::Drawer);
     aboutWindow->setAttribute(Qt::WA_DeleteOnClose);
+
     QLabel* textLabel = new QLabel;
-    QVBoxLayout* aboutLayot = new QVBoxLayout;
+    QVBoxLayout *aboutLayot = new QVBoxLayout(aboutWindow);
     textLabel->setText(tr("<h2>DeviceLinkTest</h2>"
-                          "<h4>Version 1.0.1</h4>"
-                          "<p>Communication test utility</p>"
-                          ));
+                          "<h4>Version 1.0.7</h4>"
+                          "<p>Communication test utility</p>"));
 
     aboutLayot->addWidget(textLabel, 0, Qt::AlignCenter);
-    aboutWindow->setLayout(aboutLayot);
-
     aboutWindow->show();
+}
+
+/**
+ * @brief MainWindow::on_Quit_triggered
+ */
+void MainWindow::on_Quit_triggered()
+{
+    this->close();
+}
+
+/**
+ * @brief MainWindow::on_Number_triggered
+ */
+void MainWindow::on_Number_triggered()
+{
+    numberWindow = new QDialog(this);
+    numberWindow->setWindowTitle("Number of clients");
+    numberWindow->resize(200, 120);
+    numberWindow->setModal(true);
+    numberWindow->setWindowFlags(Qt::Drawer);
+    numberWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    QVBoxLayout *numberLayot = new QVBoxLayout;
+    QHBoxLayout *numTcpLayot = new QHBoxLayout;
+    QHBoxLayout *numComLayot = new QHBoxLayout;
+    QLabel *tcpNumLabel = new QLabel("Number of TCP clients");
+    QLabel *comNumLabel = new QLabel("Number of COM clients");
+    QPushButton *numSetButton = new QPushButton("Set");
+
+    tcpNumSpinbox = new QSpinBox;
+    comNumSpinbox = new QSpinBox;
+
+    tcpNumSpinbox->setMinimum(0);
+    tcpNumSpinbox->setMaximum(tcpMaximum);
+    tcpNumSpinbox->setValue(2);
+    comNumSpinbox->setMinimum(0);
+    comNumSpinbox->setMaximum(comMaximum);
+    comNumSpinbox->setValue(1);
+
+    numTcpLayot->addWidget(tcpNumLabel);
+    numTcpLayot->addStretch();
+    numTcpLayot->addWidget(tcpNumSpinbox);
+    numComLayot->addWidget(comNumLabel);
+    numComLayot->addStretch();
+    numComLayot->addWidget(comNumSpinbox);
+
+    numberLayot->addLayout(numTcpLayot);
+    numberLayot->addLayout(numComLayot);
+    numberLayot->addWidget(numSetButton);
+    numberWindow->setLayout(numberLayot);
+
+    connect(numSetButton, SIGNAL(clicked()), this, SLOT(onNumsetButton_clicked()));
+
+    numberWindow->show();
+}
+
+/**
+ * @brief MainWindow::onNumsetButton_clicked
+ */
+void MainWindow::onNumsetButton_clicked()
+{
+    this->deinitClientViews(tcpQuantity, comQuantity);
+    this->tcpQuantity = tcpNumSpinbox->value();
+    this->comQuantity = comNumSpinbox->value();
+    this->initClientViews(tcpQuantity, comQuantity);
+
+    this->numberWindow->close();
 }

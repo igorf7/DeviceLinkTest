@@ -25,7 +25,7 @@
         <string>Connection</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="workTab">
        <attribute name="title">
         <string>Data exchange</string>
        </attribute>
@@ -47,48 +47,78 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="action"/>
     <addaction name="separator"/>
-    <addaction name="quit"/>
-   </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
+    <addaction name="Quit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
+    <addaction name="About"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="Number"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuView"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Open</string>
-   </property>
-  </action>
-  <action name="quit">
+  <action name="Quit">
    <property name="text">
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="About">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="Number">
+   <property name="text">
+    <string>Set number of clients</string>
+   </property>
+   <property name="toolTip">
+    <string>Set number of clients</string>
+   </property>
+  </action>
+  <action name="jdsj">
+   <property name="text">
+    <string>jdsj</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="ComDeleteEOL">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Delete EOL</string>
+   </property>
+  </action>
+  <action name="TcpDeleteEOL">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Delete EOL</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete EOL</string>
    </property>
   </action>
  </widget>

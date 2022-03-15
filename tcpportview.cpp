@@ -13,7 +13,7 @@ TcpPortView::TcpPortView(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    tcpClient = new TcpClient();
+    tcpClient = new TcpClient;
 
     threadTcpPort = new QThread;
     threadTcpPort->setObjectName("threadTcpPort");
@@ -41,8 +41,6 @@ TcpPortView::TcpPortView(QWidget *parent) :
                      this, &TcpPortView::onConfirmTcpConnection);
 
     threadTcpPort->start(); // Start TCP Port thread
-
-    qDebug() << "Hello from" << this;
 }
 
 /**

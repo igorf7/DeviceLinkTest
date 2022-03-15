@@ -3,6 +3,7 @@
 
 #include "tcpclient.h"
 #include <QWidget>
+#include <QFile>
 
 namespace Ui {
 class TcpWorkView;
@@ -19,6 +20,8 @@ public:
     ~TcpWorkView();
 
     void setHeader(QString header);
+    int getClientNum();
+    void setClientNum(int num);
 
 signals:
     void sendToServer(const QByteArray &msg);
@@ -34,15 +37,20 @@ protected:
 
 private slots:
     void on_pollStartButton_clicked();
+    void on_singleButton_clicked();
 
 private:
     Ui::TcpWorkView *ui;
 
+    QFile logFile;
+
     bool isPollingRun;
     bool isTcpConnected = false;
     int currentTab;
+    int clientNum;
 
     void sendPacket();
+    void createNewFile();
 };
 
 #endif // MULTPOLLVIEW_H

@@ -23,8 +23,6 @@ ComPort::ComPort(QObject *parent) : QObject(parent)
               << QSerialPort::MarkParity;
 
     connect(&serialPort, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-
-    qDebug() << "Hello from" << this;
 }
 
 /**
@@ -118,3 +116,11 @@ void ComPort::sendToComPort(const QByteArray &msg)
     }
 }
 
+/**
+ * @brief onSendToComPort
+ * @param request
+ */
+void ComPort::onSendToComPort(const QByteArray &request)
+{
+    this->sendToComPort(request);
+}

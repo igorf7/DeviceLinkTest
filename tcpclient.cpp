@@ -19,8 +19,6 @@ TcpClient::TcpClient(QObject *parent) : QObject(parent)
     connect(tcpSocket, SIGNAL(readyRead()), SLOT(slotReadyRead()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(slotError(QAbstractSocket::SocketError)));
-
-    qDebug() << "Hello from" << this;
 }
 
 /**
