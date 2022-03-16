@@ -104,6 +104,9 @@ void ComWorkView::onShowResponse(const QByteArray &response)
         if (showString.right(1) == '\n') {
             showString.chop(1);
         }
+        if (showString.right(1) == '\r') {
+            showString.chop(1);
+        }
     }
 
     ui->respLineEdit->setText(showString.toUtf8());

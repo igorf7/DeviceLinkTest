@@ -99,7 +99,7 @@ color: rgb(136, 136, 136);
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Application Port:</string>
+           <string>TCP Port:</string>
           </property>
          </widget>
         </item>
