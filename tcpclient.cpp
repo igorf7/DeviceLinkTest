@@ -48,6 +48,7 @@ void TcpClient::onClientStart()
 void TcpClient::slotReadyRead()
 {
     QByteArray data;
+
     for (;;) {
         data += tcpSocket->readAll();
         if (tcpSocket->bytesAvailable() < 1) {

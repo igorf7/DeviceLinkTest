@@ -119,7 +119,10 @@ void TcpWorkView::sendPacket()
             this->createNewFile();
             qDebug() << "New log file created";
         }
-        logFile.write("\nRequest: " + array + '\n');
+//        logFile.write("\nRequest: " + array + '\n');
+        QTextStream filename(&logFile);
+        filename << "\nRequest time: " << QTime::currentTime().toString("hh:mm:ss.zzz") << Qt::endl;
+        filename << array << Qt::endl;
     }
 }
 
@@ -140,7 +143,7 @@ void TcpWorkView::createNewFile()
         folder.mkdir(LogDir);
     }
 
-    QString filename = LogDir+"/log_";
+    QString filename = LogDir+"/tcp" + QString::number(clientNum) + "log_";
     filename.append((QDate::currentDate().toString("yyyyMMdd_")));
     filename.append(QTime::currentTime().toString("hhmmss").append(".txt"));
     logFile.setFileName(filename);
@@ -218,7 +221,7 @@ void TcpWorkView::onShowResponse(const QByteArray &response)
 
     if (ui->writeFileCheckBox->isChecked()) {
         QTextStream filename(&logFile);
-        filename << "Response:" << Qt::endl;
+        filename << "Response time: " << QTime::currentTime().toString("hh:mm:ss.zzz") << Qt::endl;
         filename << "ASCII => " << ui->respLineEdit->text() << Qt::endl;
         filename << "Hex => " << ui->respLineEditHex->text() << Qt::endl;
     }

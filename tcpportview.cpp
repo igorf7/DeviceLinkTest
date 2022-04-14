@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QHostAddress>
+#include <QBuffer>
 
 /**
  * @brief Class constructor
@@ -110,6 +111,6 @@ void TcpPortView::on_tcpConnButton_clicked()
     }
     else {
         emit setTcpConnection(ui->tcpHostnameEdit->text(),
-                                  ui->tcpPortEdit->text().toShort());
+                                  ui->tcpPortEdit->text().toUShort());
     }
 }

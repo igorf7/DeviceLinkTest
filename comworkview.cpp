@@ -215,7 +215,7 @@ void ComWorkView::createNewFile()
         folder.mkdir(LogDir);
     }
 
-    QString filename = LogDir+"/log_";
+    QString filename = LogDir + "/com" + QString::number(clientNum) + "log_";
     filename.append((QDate::currentDate().toString("yyyyMMdd_")));
     filename.append(QTime::currentTime().toString("hhmmss").append(".txt"));
     logFile.setFileName(filename);
