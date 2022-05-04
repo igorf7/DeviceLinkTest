@@ -344,6 +344,9 @@ color: rgb(136, 136, 136);</string>
           <property name="text">
            <string>Connect</string>
           </property>
+          <property name="autoDefault">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>

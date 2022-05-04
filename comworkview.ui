@@ -98,17 +98,17 @@ color: rgb(136, 136, 136);
             </item>
             <item>
              <property name="text">
-              <string>EOL: &lt;CR+ LF&gt;</string>
+              <string>EOL: &lt;CR/LF&gt;</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>EOL: &lt;LF+ CR&gt;</string>
+              <string>EOL: &lt;LF/CR&gt;</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Don't Add EOL</string>
+              <string>EOL: None</string>
              </property>
             </item>
            </widget>
@@ -118,7 +118,7 @@ color: rgb(136, 136, 136);
         <item>
          <widget class="QLineEdit" name="reqLineEdit">
           <property name="text">
-           <string>Com Test Communication String</string>
+           <string>COM communication test string</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
