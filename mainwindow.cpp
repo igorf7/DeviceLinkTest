@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setWindowTitle("DeviceLinkTest");
+    this->setWindowTitle("DeviceLinkTest (Clients)");
 
     /* Create and set layouts */
     this->initClientViews(tcpQuantity, comQuantity);
@@ -143,7 +143,7 @@ void MainWindow::on_About_triggered()
     QLabel* textLabel = new QLabel;
     QVBoxLayout *aboutLayot = new QVBoxLayout(aboutWindow);
     textLabel->setText(tr("<h2>DeviceLinkTest</h2>"
-                          "<h4>Version 1.0.7</h4>"
+                          "<h4>Version 1.0.8</h4>"
                           "<p>Communication test utility</p>"));
 
     aboutLayot->addWidget(textLabel, 0, Qt::AlignCenter);

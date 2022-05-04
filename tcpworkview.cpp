@@ -110,6 +110,7 @@ void TcpWorkView::sendPacket()
         break;
     }
 
+    ui->respLineEdit->clear();
     emit sendToServer(array);
 
     ui->txLcdNumber->display(ui->txLcdNumber->value()+1);
