@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setWindowTitle("DeviceLinkTest (Clients)");
+    this->setWindowTitle("DeviceLinkTest (Client)");
 
     /* Create and set layouts */
     this->initClientViews(tcpQuantity, comQuantity);
@@ -137,7 +137,10 @@ void MainWindow::on_About_triggered()
     aboutWindow->setWindowTitle("About");
     aboutWindow->resize(350, 230);
     aboutWindow->setModal(true);
-    aboutWindow->setWindowFlags(Qt::Drawer);
+
+    aboutWindow->setWindowFlags((aboutWindow->windowFlags())
+                                  & (~Qt::WindowContextHelpButtonHint));
+
     aboutWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     QLabel* textLabel = new QLabel;
@@ -167,7 +170,10 @@ void MainWindow::on_Number_triggered()
     numberWindow->setWindowTitle("Number of clients");
     numberWindow->resize(200, 120);
     numberWindow->setModal(true);
-    numberWindow->setWindowFlags(Qt::Drawer);
+
+    numberWindow->setWindowFlags((numberWindow->windowFlags())
+                                  & (~Qt::WindowContextHelpButtonHint));
+
     numberWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     QVBoxLayout *numberLayot = new QVBoxLayout;

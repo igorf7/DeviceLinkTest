@@ -120,7 +120,6 @@ void TcpWorkView::sendPacket()
             this->createNewFile();
             qDebug() << "New log file created";
         }
-//        logFile.write("\nRequest: " + array + '\n');
         QTextStream filename(&logFile);
         filename << "\nRequest time: " << QTime::currentTime().toString("hh:mm:ss.zzz") << Qt::endl;
         filename << array << Qt::endl;
