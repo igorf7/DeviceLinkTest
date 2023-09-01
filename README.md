@@ -7,6 +7,6 @@ clients can be set in Menu - Settings - Set number of clients.
 This program can be useful when developing devices with appropriate interfaces/protocols.
 The project is developed in the Qt Creator IDE.
 ## Content
-Here are the source codes of the program and the installation file.
+Project source files and project file.
 ## Installation
 Run the installation file Install_DLT.exe and follow the instructions of the installer.
