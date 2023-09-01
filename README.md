@@ -8,5 +8,3 @@ This program can be useful when developing devices with appropriate interfaces/p
 The project is developed in the Qt Creator IDE.
 ## Content
 Project source files and project file.
-## Installation
-Run the installation file Install_DLT.exe and follow the instructions of the installer.
